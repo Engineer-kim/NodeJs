@@ -71,7 +71,7 @@ exports.getCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   let fetchedCart;
-  let newQuantity = 1;
+  let newQuantity = 1; //1Initalize X  -> One Add Quantity
   req.user
     .getCart()
     .then(cart => {
@@ -93,7 +93,7 @@ exports.postCart = (req, res, next) => {
     })
     .then(product => {
       return fetchedCart.addProduct(product, {
-        through: { quantity: newQuantity }
+        through: { quantity: newQuantity }  //ManyToMany
       });
     })
     .then(() => {
