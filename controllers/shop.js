@@ -133,7 +133,7 @@ exports.postOrder = (req, res, next) => {
         .then(order => {
           return order.addProducts(
             products.map(product => {
-              product.orderItem = { quantity: product.cartItem.quantity };
+              product.orderItem = { quantity: product.cartItem.quantity }; // Order-itemJs name erang Same he ya ham
               return product;
             })
           );
