@@ -85,6 +85,9 @@ class User {
       });
   }
 
+
+  //삭제 함수(단순 딜리트가 아니라 배열에서 각각의 요소 비교후 ) ==> productId가 삭제할 productId와 일치하지 않는 경우에만
+  //그 아이템을 새로운 배열에 포함시켜서 새로운 배열 생성
   deleteItemFromCart(productId) {
     const updatedCartItems = this.cart.items.filter(item => {
       return item.productId.toString() !== productId.toString();
