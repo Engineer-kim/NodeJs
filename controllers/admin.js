@@ -4,7 +4,8 @@ exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false
+    editing: false,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -18,7 +19,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     description: description,
     imageUrl: imageUrl,
-    userId: req.user
+    userId: req.session.user
   });
   product
     .save()
@@ -47,7 +48,8 @@ exports.getEditProduct = (req, res, next) => {
         pageTitle: 'Edit Product',
         path: '/admin/edit-product',
         editing: editMode,
-        product: product
+        product: product,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
@@ -60,8 +62,8 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
 
-  Product.findById(prodId)  
-    .then(product => { //product 는 JS 객체(데이터 저장 및 접근만 가능)가 아닌 몽구스의 객체(데이터베이스와 상호작용가능)임
+  Product.findById(prodId)
+    .then(product => {  //product 는 JS 객체(데이터 저장 및 접근만 가능)가 아닌 몽구스의 객체(데이터베이스와 상호작용가능)임
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDesc;
@@ -84,7 +86,8 @@ exports.getProducts = (req, res, next) => {
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
-        path: '/admin/products'
+        path: '/admin/products',
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch(err => console.log(err));
