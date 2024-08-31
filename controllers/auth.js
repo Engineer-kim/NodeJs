@@ -1,6 +1,27 @@
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
 
 const User = require('../models/user');
+
+const email ={
+  "host" : "sandbox.smtp.mailtrap.io",
+  "port" : "2525",
+  "secure" : false,
+  "auth" : {
+    "user" : "91a3d77d210f5a",
+    "pass" : "bc5edd1ed55b77",
+  },
+}
+
+const send = async (data) => {
+  try {
+    const transporter = nodemailer.createTransport(email);
+    const info = await transporter.sendMail(data);
+    console.log("info:::::::::", info);
+  } catch (error) {
+    console.log("error:::::::::", error);
+  }
+};
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -82,6 +103,15 @@ exports.postSignup = (req, res, next) => {
           return user.save();
         })
         .then(result => {
+          const mailOptions = {
+            from: 'testMaster@example.com', // 보내는 사람 이메일
+            to: email, // 받는 사람 이메일
+            subject: 'Welcome to Our Service!',
+            text: 'Thank you for signing up! We are glad to have you on board.'
+          };
+          return send(mailOptions); // send 함수 호출
+        })
+        .then(() => {
           res.redirect('/login');
         });
     })
