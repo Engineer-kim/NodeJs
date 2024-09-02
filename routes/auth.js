@@ -11,7 +11,18 @@ router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post(
+    '/login',
+    [
+      body('email')
+        .isEmail()
+        .withMessage('Please enter a valid email address.'),
+      body('password', 'Password has to be valid.')
+        .isLength({ min: 5 })
+        .isAlphanumeric()
+    ],
+    authController.postLogin
+  );
 
 //withMessage =>  검증에 실패했을 때 반환할 오류 메시지를 설정하는 데 사용
 //isAlphanumeric =>  주어진 값이 알파벳과 숫자로만 구성되어 있는지 확인

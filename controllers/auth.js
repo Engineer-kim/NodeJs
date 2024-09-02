@@ -5,6 +5,7 @@ const { validationResult } = require('express-validator')
 
 
 const User = require('../models/user');
+const { ValidationError } = require('sequelize');
 
 const email ={
   "host" : "sandbox.smtp.mailtrap.io",
@@ -50,19 +51,25 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    errorMessage: message,
-    oldInput: { email: '', 
-      password: '', 
-      confirmPassword: ''
-      }
+    errorMessage: message
   });
 };
 
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.render('auth/login', {
+      path: '/login',
+      pageTitle: 'Login',
+      errorMessage: errors.array()[0].msg
+    });
+  }
+
   User.findOne({ email: email })
-    .then(user => {
+    .then(user => { 
       if (!user) {
         req.flash('error', 'Invalid email or password.');
         return res.redirect('/login');
@@ -92,20 +99,16 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+
   const errors = validationResult(req);
-  if (!errors.isEmpty()){
+  if (!errors.isEmpty()) {
     console.log(errors.array());
-    return res.status(422).render(res.render('auth/signup', {
+    return res.status(422).render('auth/signup', {
       path: '/signup',
       pageTitle: 'Signup',
-      errorMessage: errors.array()[0].msg,
-      oldInput: { email: email, 
-        password: password, 
-        confirmPassword: req.body.confirmPassword
-        }
-      })
-    );
-  }   
+      errorMessage: errors.array()[0].msg
+    });
+  } 
   bcrypt
         .hash(password, 12)
         .then(hashedPassword => {
