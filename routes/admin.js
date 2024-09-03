@@ -15,8 +15,7 @@ router.get('/add-product', isAuth, adminController.getAddProduct);
 router.get('/products', isAuth, adminController.getProducts);
 
 // /admin/add-product => POST
-router.post(
-    '/add-product',
+router.post('/add-product',
     [
       body('title')
         .isString()
@@ -28,6 +27,16 @@ router.post(
         .trim()
     ],
     isAuth,
+    (req, res, next) => {
+      // 요청 바디 로그 출력
+      console.log('Request Body:', req.body);
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        console.log('Validation Errors:', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+      }
+      next();
+    },
     adminController.postAddProduct
   );
   
