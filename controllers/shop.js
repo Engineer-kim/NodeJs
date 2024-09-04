@@ -12,8 +12,8 @@ exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
 
-  Product.find()
-    .countDocuments()
+  Product.find()  //커서( =  데이터베이스에서 쿼리 결과를 순차적으로 탐색하고 처리하기 위한 객체)  반환  ,LazyLoading 과 마찬가지
+    .countDocuments() //인덱스를 활용하여 성능을 최적화
     .then(numProducts => {
       totalItems = numProducts;
       return Product.find()
