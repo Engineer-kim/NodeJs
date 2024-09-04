@@ -28,7 +28,8 @@ const fileStorage = multer.diskStorage({
   
   },
   filename: (req, file, cb) => {  // 파일 이름 생성
-    cb(null, new Date().toISOString() + '-' + file.originalname);
+    const safeFileName = new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
+    cb(null, safeFileName);
   }
 });
 console.log(fileStorage);
