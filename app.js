@@ -30,8 +30,8 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
-const privateKey = fs.readFileSync('server.key');
-const certificate = fs.readFileSync('server.cert');
+// const privateKey = fs.readFileSync('server.key');
+// const certificate = fs.readFileSync('server.cert');
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {  // 파일 업로드 될때의 저장소
