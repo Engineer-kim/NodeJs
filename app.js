@@ -145,5 +145,5 @@ mongoose
     app.listen(process.env.PORT || 3000);
   })
   .catch(err => {
-    console.log(err);
+    console.error('Database connection error:', err); // 추가된 로그
   });
