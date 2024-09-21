@@ -86,6 +86,7 @@ exports.postLogin = (req, res, next) => {
 
   User.findOne({ email: email })
     .then(user => {
+      console.log('찾은 사용자:', user);
       if (!user) {
         return res.status(422).render('auth/login', {
           path: '/login',
@@ -101,11 +102,14 @@ exports.postLogin = (req, res, next) => {
       bcrypt
         .compare(password, user.password)
         .then(doMatch => {
+          console.log('비밀번호 일치:', doMatch);
           if (doMatch) {
             req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save(err => {
-              console.log(err);
+              if (err) {
+                console.log(err);
+              }
               res.redirect('/');
             });
           }
@@ -122,7 +126,7 @@ exports.postLogin = (req, res, next) => {
         })
         .catch(err => {
           console.log(err);
-          res.redirect('/login');
+          return next(new Error(err));
         });
     })
     .catch(
@@ -154,6 +158,7 @@ exports.postSignup = (req, res, next) => {
   bcrypt
         .hash(password, 12)
         .then(hashedPassword => {
+          console.log('해시된 비밀번호:', hashedPassword);
           const user = new User({
             email: email,
             password: hashedPassword,
@@ -162,7 +167,7 @@ exports.postSignup = (req, res, next) => {
           return user.save();
         })
         .then(result => {
-          res.redirect('/login');
+          console.log('회원가입 후 저장된 사용자:', result);
           const mailOptions = {
             from: 'testMaster@example.com', // 보내는 사람 이메일
             to: email, // 받는 사람 이메일
@@ -221,7 +226,6 @@ exports.postReset = (req, res, next) => {
         return user.save();
       })
       .then(result => {
-        res.redirect('/');
         send({
           to: req.body.email,
           from: 'shop@node-complete.com',
@@ -231,6 +235,7 @@ exports.postReset = (req, res, next) => {
             <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
           `
         });
+        return res.redirect('/');
       })
       .catch(
         err => {
